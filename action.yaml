@@ -1,0 +1,39 @@
+
+name: deploy-ecr
+run-name: Deploy ECR
+inputs:
+  application_id:
+    description: Application id for authorization
+    required: true
+    type: string
+  application_secret:
+    description: Application secret
+    required: true
+    type: string
+  apps_repository:
+    description: The application containing application definitions.
+    required: true 
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate a token
+      id: generate-token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ inputs.application_id }}
+        private-key: ${{ inputs.application_secret }}
+        owner: jppol-idp
+        repositories: ${{ inputs.apps_repository }}
+
+    - name: Deploy
+      env:
+        GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+      run: |
+        gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/jppol-idp/${{inputs.apps_repository}}/actions/workflows/update-images.yaml/dispatches \
+          -f "ref=main" 
