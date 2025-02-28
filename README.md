@@ -20,13 +20,8 @@ on:
 jobs:
   build_and_push:
     runs-on: ubuntu-24.04
-    permissions: write-all
-    strategy:
-      fail-fast: false
     steps:
-      - name: Push 
-        id: push
-        uses: jppol-idp/trigger-image-update@main
+      - uses: jppol-idp/trigger-image-update@main
         with:
           application_id: {{ var.IDP_DEPLOY_TRIGGER }}
           application_secret: {{ secrets.IDP_DEPLOY_TRIGGER_KEY }}
