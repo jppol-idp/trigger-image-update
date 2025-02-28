@@ -14,7 +14,7 @@ do something like
 
 ```yaml
 
-name: Custom build and tag...
+name: Update image tags
 on:
   workflow_dispatch:
 jobs:
@@ -26,14 +26,14 @@ jobs:
     steps:
       - name: Push 
         id: push
-        uses: jppol-idp/tag-and-push-ecr@main
+        uses: jppol-idp/trigger-image-update@main
         with:
-          source_tag: local-build
-          image_name: testing-ecr-tag
-          namespace: idp
-          image_tags: dev-${{ github.run_number }} test-${{ github.run_number }} ${{ github.sha }}
+          application_id: {{ var.IDP_DEPLOY_TRIGGER }}
+          application_secret: {{ secrets.IDP_DEPLOY_TRIGGER_KEY }}
+          apps_repository: apps-koa
 ```
-In this example we get a push to `354918371398.dkr.ecr.eu-west-1.amazonaws.com/idp/testing-ecr-tag`
 
+Here we use a variable for application id and a secret for the key. These should of course be 
+stored in the repo using the action.
 
 
